@@ -10,24 +10,27 @@
     <div class="spinner"></div>
     Загрузка установщика...
 </div>
+
 <div class="app-wrapper">
     <div class="sidebar">
-        <div class="title">Приложения</div>
-        <div class="list"><div class="item" data-app="lampa"><img src="icons/lampa_72.png" alt=""> Lampa</div><div class="item" data-app="ilampa"><img src="icons/ilampa_72.png" alt=""> iLampa</div><div class="item" data-app="spotify"><img src="icons/spotify_72.png" alt=""> Spotify</div><div class="item" data-app="ottplay"><img src="icons/ottplay_72.png" alt=""> OTT-Play FOSS</div><div class="item" data-app="windy"><img src="icons/windy_72.png" alt=""> Windy</div><div class="item focused" data-app="msx"><img src="icons/msx_72.png" alt=""> Media Station X</div></div>
+        <div class="title">Apps</div>
+        <div class="list"></div>
     </div>
+
     <div class="content">
-        <div class="preview-logo"><img id="previewLogo" src="icons/msx_256.png" alt=""></div>
+        <div class="preview-logo"><img id="previewLogo" src="" alt=""></div>
         <div>
-            <div class="app-name" id="previewName">Media Station X</div>
-            <div class="app-desc" id="previewDesc">Медиаплатформа для потокового воспроизведения видео...</div>
+            <div class="app-name" id="previewName"></div>
+            <div class="app-desc" id="previewDesc"></div>
         </div>
         <div class="hint">Нажмите OK для установки выбранного приложения. Используйте ↑ ↓ для выбора, 0 — сменить тему.</div>
     </div>
 </div>
-<footer>↑ ↓ — выбор • OK — установить • 0 — тёмная/светлая тема</footer>
+
+<footer>↑ ↓ — выбор • OK — установить • 0 — тема</footer>
 
 <script>
-let apps = {
+var apps = {
   "lampa": {
     "appid": "lampa",
     "name": "Lampa",
@@ -36,7 +39,7 @@ let apps = {
     "icon180": "icons/lampa_180.png",
     "icon512": "icons/lampa_512.png",
     "logo": "icons/lampa_256.png",
-    "desc": "Мощное приложение для онлайн‑просмотра фильмов и сериалов..."
+    "desc": "Мощное приложение для онлайн-просмотра фильмов и сериалов..."
   },
   "ilampa": {
     "appid": "ilampa",
@@ -46,7 +49,7 @@ let apps = {
     "icon180": "icons/ilampa_180.png",
     "icon512": "icons/ilampa_512.png",
     "logo": "icons/ilampa_256.png",
-    "desc": "Локальная версия Lampa, работающая в вашей сети..."
+    "desc": "Локальная версия Lampa..."
   },
   "spotify": {
     "appid": "spotify",
@@ -56,119 +59,162 @@ let apps = {
     "icon180": "icons/spotify_180.png",
     "icon512": "icons/spotify_512.png",
     "logo": "icons/spotify_256.png",
-    "desc": "Популярный музыкальный сервис для потокового прослушивания..."
-  },
-  "ottplay": {
-    "appid": "ottplay",
-    "name": "OTT-Play FOSS",
-    "url": "http://ottp.eu.org/f/hisense/",
-    "icon72": "icons/ottplay_72.png",
-    "icon180": "icons/ottplay_180.png",
-    "icon512": "icons/ottplay_512.png",
-    "logo": "icons/ottplay_256.png",
-    "desc": "Открытая платформа для просмотра IPTV и онлайн‑каналов..."
-  },
-  "windy": {
-    "appid": "windy",
-    "name": "Windy",
-    "url": "https://windy.com/",
-    "icon72": "icons/windy_72.png",
-    "icon180": "icons/windy_180.png",
-    "icon512": "icons/windy_512.png",
-    "logo": "icons/windy_256.png",
-    "desc": "Интерактивное погодное приложение с картами ветра..."
-  },
-  "msx": {
-    "appid": "msx",
-    "name": "Media Station X",
-    "url": "https://msx.benzac.de/",
-    "icon72": "icons/msx_72.png",
-    "icon180": "icons/msx_180.png",
-    "icon512": "icons/msx_512.png",
-    "logo": "icons/msx_256.png",
-    "desc": "Медиаплатформа для потокового воспроизведения видео..."
+    "desc": "Музыкальный сервис..."
   }
 };
 
-let items = [];
-let index = 0;
+var items = [];
+var index = 0;
+var audioCtx = null;
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
 
 function playNav() {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "square"; osc.frequency.value = 800;
+    var ctx = getAudioCtx();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.value = 800;
     gain.gain.value = 0.05;
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(); osc.stop(ctx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.05);
 }
+
 function playOk() {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "triangle"; osc.frequency.value = 1100;
+    var ctx = getAudioCtx();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = 1100;
     gain.gain.setValueAtTime(0.0001, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(); osc.stop(ctx.currentTime + 0.09);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.09);
 }
+
 function setFocus(i) {
+    if (!items.length) return;
+
     if (i < 0) i = items.length - 1;
     if (i >= items.length) i = 0;
+
     index = i;
-    items.forEach(el => el.classList.remove("focused"));
+
+    for (var j = 0; j < items.length; j++) {
+        items[j].classList.remove("focused");
+    }
+
     items[index].classList.add("focused");
+
     updatePreview();
     playNav();
-}
-function updatePreview() {
-    const key = items[index].getAttribute("data-app");
-    const app = apps[key];
-    if (!app) return;
-    document.getElementById("previewLogo").src = app.logo;
-    document.getElementById("previewName").textContent = app.name;
-    document.getElementById("previewDesc").textContent = app.desc;
-}
-function install(app) {
-    try {
-        Hisense_installApp(app.appid, app.name, app.icon72, app.icon180, app.icon512, app.url, function () {
-            playOk();
-            alert(app.name + " установлено!");
-        });
-    } catch (e) {
-        alert("Откройте эту страницу в браузере ТВ Hisense.\n" + e);
+
+    if (items[index].scrollIntoView) {
+        items[index].scrollIntoView({ block: "nearest" });
     }
 }
-document.addEventListener("keydown", e => {
-    if (e.keyCode === 38) setFocus(index - 1); // up
-    else if (e.keyCode === 40) setFocus(index + 1); // down
-    else if (e.keyCode === 13) { // OK
-        const appKey = items[index].getAttribute("data-app");
-        install(apps[appKey]);
-    } else if (e.keyCode === 48) document.body.classList.toggle("light");
-});
-function renderList() {
-    const list = document.querySelector(".list");
-    list.innerHTML = "";
-    Object.keys(apps).forEach((key, i) => {
-        const app = apps[key];
-        const div = document.createElement("div");
-        div.className = "item" + (i === 0 ? " focused" : "");
-        div.setAttribute("data-app", key);
-        div.innerHTML = `<img src="${app.icon72}" alt=""> ${app.name}`;
-        div.addEventListener("click", () => {
-            setFocus(i);
-            install(app);
-        });
-        list.appendChild(div);
-    });
-    items = document.querySelectorAll(".item");
+
+function updatePreview() {
+    if (!items.length) return;
+
+    var key = items[index].getAttribute("data-app");
+    var app = apps[key];
+    if (!app) return;
+
+    document.getElementById("previewLogo").src = app.logo;
+    document.getElementById("previewName").innerHTML = app.name;
+    document.getElementById("previewDesc").innerHTML = app.desc;
 }
-window.onload = () => {
-    setTimeout(() => document.getElementById("loader").classList.add("hidden"), 1600);
+
+function install(app) {
+    try {
+        if (typeof Hisense_installApp === "function") {
+            Hisense_installApp(
+                app.appid,
+                app.name,
+                app.icon72,
+                app.icon180,
+                app.icon512,
+                app.url,
+                function () {
+                    playOk();
+                    alert(app.name + " установлено!");
+                }
+            );
+        } else {
+            alert("Откройте страницу на ТВ Hisense");
+        }
+    } catch (e) {
+        alert("Ошибка: " + e.message);
+    }
+}
+
+function renderList() {
+    var list = document.querySelector(".list");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    for (var key in apps) {
+        if (!apps.hasOwnProperty(key)) continue;
+
+        var app = apps[key];
+
+        var div = document.createElement("div");
+        div.className = "item";
+        div.setAttribute("data-app", key);
+
+        div.innerHTML = "<img src='" + app.icon72 + "'> " + app.name;
+
+        div.onclick = (function (k, a, i) {
+            return function () {
+                setFocus(i);
+                install(a);
+            };
+        })(key, app, Object.keys(apps).indexOf(key));
+
+        list.appendChild(div);
+    }
+
+    items = document.querySelectorAll(".item");
+
+    if (items.length > 0) {
+        items[0].classList.add("focused");
+    }
+}
+
+document.addEventListener("keydown", function (e) {
+    if (e.keyCode === 38) {
+        setFocus(index - 1);
+    } else if (e.keyCode === 40) {
+        setFocus(index + 1);
+    } else if (e.keyCode === 13) {
+        if (!items.length) return;
+        var key = items[index].getAttribute("data-app");
+        install(apps[key]);
+    } else if (e.keyCode === 48) {
+        document.body.classList.toggle("light");
+    }
+});
+
+window.onload = function () {
     renderList();
     updatePreview();
+
+    setTimeout(function () {
+        var loader = document.getElementById("loader");
+        if (loader) loader.classList.add("hidden");
+    }, 1000);
 };
 </script>
 </body>
