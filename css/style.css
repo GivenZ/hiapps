@@ -1,0 +1,150 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    background: radial-gradient(circle at top, #0d1b2a, #000);
+    color: #fff;
+    overflow: hidden;
+    transition: background 0.4s, color 0.4s;
+}
+body.light {
+    background: linear-gradient(180deg, #eaf2ff, #cfd9f7);
+    color: #111;
+}
+
+/* Загрузочный экран */
+#loader {
+    position: fixed;
+    inset: 0;
+    background: #0d1b2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #fff;
+    font-size: 28px;
+    z-index: 10;
+    animation: fadeOut 0.6s ease-out forwards;
+    animation-delay: 1.2s;
+}
+#loader.hidden { display: none; }
+
+#loader .spinner {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 6px solid rgba(255,255,255,0.2);
+    border-top-color: #1e90ff;
+    margin-bottom: 20px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+.app-wrapper {
+    display: flex;
+    height: 100vh;
+    padding: 40px 60px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+    animation-delay: 1.0s;
+}
+
+/* Сайдбар */
+.sidebar {
+    width: 360px;
+    padding-right: 40px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+body.light .sidebar { border-right-color: rgba(0,0,0,0.1); }
+
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1e90ff;
+}
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+/* Элементы списка */
+.item {
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+}
+body.light .item {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.item img { width: 48px; height: 48px; border-radius: 8px; }
+.item.focused {
+    border-color: #1e90ff;
+    background: rgba(30,144,255,0.15);
+    transform: translateX(6px) scale(1.05); /* плавное скольжение + увеличение */
+    box-shadow: 0 4px 16px rgba(30,144,255,0.4);
+    opacity: 1;
+}
+body.light .item.focused {
+    background: #e3f2fd;
+    border-color: #1e90ff;
+    box-shadow: 0 4px 12px rgba(30,144,255,0.3);
+}
+
+/* Контент */
+.content {
+    flex: 1;
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+}
+.preview-logo {
+    width: 200px;
+    height: 200px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+body.light .preview-logo {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.preview-logo img { width: 100%; height: 100%; object-fit: contain; }
+.app-name {
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1e90ff;
+}
+.app-desc { font-size: 18px; color: #ccc; max-width: 800px; }
+body.light .app-desc { color: #333; }
+.hint { font-size: 18px; color: #aaa; margin-top: 32px; }
+body.light .hint { color: #555; }
+
+/* Footer */
+footer {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+body.light footer { color: #444; }
